@@ -1,0 +1,1 @@
+### I am using the Kaggle House Prices test competiton to begin my journey learning Python. This will be a little rough, once I'm more comfortable working in Python I will submit a cleaner project in Notebook format
