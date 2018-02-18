@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from scipy.stats import norm
-from sklearn.preprocessing import StandardScaler
+from sklearn import linear_model
 from scipy import stats
 
 df_train = pd.read_csv('train.csv')
@@ -26,6 +26,14 @@ df_train['SalePrice']
 # will be to decide how to summarise the dependent variable SalePrice, is there a better method than
 # just looking at the mean? I imagine there will be some important decisions around missing data too.
 
+# There are a lot of predictor variables here, which makes me worry about overfitting, and thus I intend
+# to use this to measure the effects of regularisation. As I have never fitted a model in Python before,
+# my initial approach will be to identify a handful of variables which seem to contain predicative power,
+# just drop all the missing values, and fit a simple linear regression.
+
+# "What's the smallest step I can take to make progress"
+
+
 print((df_train == 0).sum())
 print(df_train.isnull().sum())
 
@@ -36,5 +44,40 @@ print(df_train.isnull().sum())
 df_train['MSZoning'] = df_train['MSZoning'].astype('category')
 
 df_train['SalePrice'].hist()
+df_train.boxplot(column='SalePrice')
+df_train.boxplot(column='SalePrice',by ='MSSubClass')
+df_train.boxplot(column='SalePrice',by ='MSZoning')
+df_train.boxplot(column='SalePrice',by ='Utilities')
+df_train.boxplot(column='SalePrice',by ='Neighborhood')
+df_train.boxplot(column='SalePrice',by ='BldgType')
+df_train.boxplot(column='SalePrice',by ='OverallQual')
+df_train.boxplot(column='SalePrice',by ='OverallCond')
+df_train.boxplot(column='SalePrice',by ='Foundation')
+df_train.boxplot(column='SalePrice',by ='BedroomAbvGr')
 
-#test
+plt.scatter(df_train['1stFlrSF'],df_train['SalePrice'])
+plt.xlabel('1st Floor Square Footage')
+plt.ylabel('Sale Price')
+plt.title('Sale Price vs 1st Floor Sq Footage')
+plt.show()
+
+
+# First attempt at modelling, use entire dataset
+
+split = round(len(df_train)*0.7)
+
+train = df_train[:split]
+test = df_train[split:]
+
+regr = linear_model.LinearRegression()
+
+train.loc[:,'SalePrice']
+train.drop(['SalePrice'],axis =1)
+
+regr.fit(train.drop(['SalePrice'],axis =1),train.loc[:,'SalePrice'])
+
+# This didn't work, not surprising as I have not managed the data at all.
+# Next attempt is to get a model working with a very small subset of features
+
+
+regr.fit(train.loc[:,'1stFlrSF'],train.loc[:,'SalePrice'])
